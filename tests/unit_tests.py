@@ -211,6 +211,23 @@ class TestOfDolt(unittest.TestCase):
         dolt.foo.DELETE()
         verify_all(dolt._http)
 
+    def test_supports_post_method(self):
+        dolt = testable_dolt()
+        dolt._http.request("/foo", "POST", body='x=1').AndReturn(({}, "{}"))
+        replay_all(dolt._http)
+
+        dolt.foo.POST(x='1')
+        verify_all(dolt._http)
+
+    def test_supports_raw_post_body(self):
+        dolt = testable_dolt()
+        dolt._http.request("/foo", "POST", body='hello').AndReturn(({}, "{}"))
+        replay_all(dolt._http)
+
+        dolt.foo.RAW_POST(body='hello')
+        verify_all(dolt._http)
+
+
     def test_supports_various_methods_as_attributes_as_well(self):
         dolt = testable_dolt()
 
@@ -312,6 +329,17 @@ class TestOfDolt(unittest.TestCase):
 
         # second call shouldn't raise an exception
         self.assertEqual(dolt.foo()['foo'], 'bar')
+
+    def test_getitem_allows_magic(self):
+        dolt = testable_dolt()
+        for method in dolt._supported_methods:
+            dolt._http.request("/%s" % method, "GET", body=None).AndReturn(({}, "{}"))
+        replay_all(dolt._http)
+
+        for method in dolt._supported_methods:
+            dolt[method]()
+
+        verify_all(dolt._http)
 
 
 if __name__ == '__main__':

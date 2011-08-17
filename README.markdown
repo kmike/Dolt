@@ -63,6 +63,10 @@ code:
 
 This works for other HTTP methods as well, such as `PUT`, `DELETE`, and `HEAD`.
 
+For raw POST requests use `RAW_POST` method and pass raw POST content
+as `body` keyword argument:
+
+    some_api.some_method.RAW_POST(body='REQUEST BODY IS HERE')
 
 Handling authentication
 -----------------------

@@ -8,7 +8,7 @@ import urllib
 class Dolt(object):
 
     def __init__(self, http=None):
-        self._supported_methods = ("GET", "POST", "PUT", "HEAD", "DELETE",)
+        self._supported_methods = ("GET", "POST", "PUT", "HEAD", "DELETE", "RAW_POST")
         self._attribute_stack = []
         self._method = "GET"
         self._posts = []
@@ -33,6 +33,10 @@ class Dolt(object):
         return self._params_template % urllib.urlencode(params)
 
     def _generate_body(self):
+        if self._method == 'RAW_POST':
+            self._method = 'POST'
+            return self._params['body']
+
         if self._method == 'POST':
             internal_params = self._params.copy()
             if 'GET' in internal_params:
